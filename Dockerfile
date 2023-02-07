@@ -7,14 +7,16 @@ WORKDIR /app
 # Copy the package.json and package-lock.json files to the container
 COPY package*.json ./
 
-# Install the dependencies in the container
-RUN npm install
-
 # Copy the rest of the project files to the container
-COPY . .
+COPY . ./
+
+# Install the dependencies in the container
+RUN yarn
+
+RUN yarn build
 
 # Expose port 3001 in the container
 EXPOSE 3001
 
 # Set the command to start the application
-CMD ["npm", "start"]
+CMD ["node", "dist/src/main.js"]

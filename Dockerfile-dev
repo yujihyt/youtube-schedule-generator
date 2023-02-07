@@ -1,0 +1,11 @@
+﻿FROM node:14
+
+WORKDIR /app
+
+COPY . ./
+
+RUN yarn && yarn cache clean
+
+EXPOSE 3001
+
+CMD ["yarn", "start:dev"]
