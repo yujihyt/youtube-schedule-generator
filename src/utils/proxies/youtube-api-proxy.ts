@@ -3,16 +3,17 @@ import { config } from 'dotenv';
 
 import { handleAxiosError } from '../axios-utils';
 
-const { NODE_ENV } = process.env;
-
-const envFile = `.env.${NODE_ENV}`;
+const envFile = '.env';
 
 config({ path: envFile });
 
-const { YOUTUBE_API } = process.env;
+const { YOUTUBE_API, YOUTUBE_KEY } = process.env;
 
 const youtubeApiProxy = axios.create({
   baseURL: YOUTUBE_API,
+  params: {
+    key: YOUTUBE_KEY,
+  },
 });
 
 youtubeApiProxy.interceptors.response.use(
