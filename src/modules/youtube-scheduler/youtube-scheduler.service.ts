@@ -6,18 +6,16 @@ export class YoutubeSchedulerService {
   async getVideoDurations(searchTerm: string, maxResults: number) {
     const videoDurations: VideoDuration[] = [];
     let pageToken = '';
-    let remainingResults = maxResults;
+    let remainingResults = maxResults ?? 100;
 
     while (remainingResults > 0) {
-      const searchUrl = `search?part=id&q=${searchTerm}&type=video&maxResults=50&pageToken=${pageToken}`;
-      const searchResponse = await youtubeApiProxy.get(searchUrl);
-      const searchData = searchResponse.data;
+      const searchUrl = `search?part=id&q=${searchTerm}&pageToken=${pageToken}&type=video&maxResults=50`;
+      const { data: responseData } = await youtubeApiProxy.get(searchUrl);
 
-      const videoIds = searchData.items.map((item) => item.id.videoId);
+      const videoIds = responseData.items.map((item) => item.id.videoId);
 
       const videoUrl = `videos?part=contentDetails&id=${videoIds.join(',')}`;
-      const videoResponse = await youtubeApiProxy.get(videoUrl);
-      const videoData = videoResponse.data;
+      const { data: videoData } = await youtubeApiProxy.get(videoUrl);
 
       videoData.items.forEach((item) => {
         videoDurations.push({
@@ -26,7 +24,7 @@ export class YoutubeSchedulerService {
         });
       });
 
-      pageToken = searchData.nextPageToken || '';
+      pageToken = responseData.nextPageToken || '';
       remainingResults -= videoIds.length;
     }
 
